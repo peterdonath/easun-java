@@ -19,16 +19,16 @@ public class SerialConnection {
 
     private SerialConnection() {
 
-        ObjectMapper mapper = new ObjectMapper();
-
         Arrays.stream(SerialPort.getCommPorts())
                 .forEach(port ->
                 {
-                    try {
-                        log.info(mapper.writeValueAsString(port));
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
+                    log.info("Port name: {}, baudrate: {}, parity: {}, databits: {}, stopbits: {}, description: {}",
+                            port.getDescriptivePortName(),
+                            port.getBaudRate(),
+                            port.getParity(),
+                            port.getNumDataBits(),
+                            port.getNumStopBits(),
+                            port.getPortDescription())
                 });
 
         comPort = SerialPort.getCommPorts()[0];
