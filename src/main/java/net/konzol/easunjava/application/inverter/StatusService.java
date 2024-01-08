@@ -29,6 +29,15 @@ public class StatusService {
     @EventListener
     public void serialMessageEventHandler(SerialMessageEvent event) {
         String[] data = event.getMessage().split(" ");
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            log.info("MessageParsing: {}", mapper.writeValueAsString(data));
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+
         deviceStatus.setGridVoltage(Double.parseDouble(data[0].replace("(","")));
         deviceStatus.setGridFrequency(Double.parseDouble(data[1]));
         deviceStatus.setOutputVoltage(Double.parseDouble(data[2]));
@@ -45,7 +54,6 @@ public class StatusService {
         deviceStatus.setBatteryVoltageScc(Double.parseDouble(data[13]));
         deviceStatus.setBatteryDischargeCurrent(Integer.parseInt(data[14]));
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             log.info("DeviceStatus: {}", mapper.writeValueAsString(deviceStatus));
         } catch (JsonProcessingException e) {
