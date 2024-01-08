@@ -63,7 +63,7 @@ public class SerialConnection {
         public void serialEvent(SerialPortEvent event) {
             byte[] delimitedMessage = event.getReceivedData();
             String message = new String(delimitedMessage, StandardCharsets.UTF_8);
-            log.debug("Received the following delimited message: {}", message);
+            log.info("Received the following delimited message: {}", message);
         }
     }
 }
