@@ -29,7 +29,7 @@ public class StatusService {
         deviceStatus.setGridFrequency(Double.parseDouble(data[1]));
         deviceStatus.setOutputVoltage(Double.parseDouble(data[2]));
         deviceStatus.setOutputFrequency(Double.parseDouble(data[3]));
-        deviceStatus.setOutputActivePower(Integer.parseInt(data[4]));
+        deviceStatus.setOutputApparentPower(Integer.parseInt(data[4]));
         deviceStatus.setOutputActivePower(Integer.parseInt(data[5]));
         deviceStatus.setBusVoltage(Integer.parseInt(data[6]));
         deviceStatus.setBatteryVoltage(Double.parseDouble(data[7]));
