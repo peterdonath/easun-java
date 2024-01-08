@@ -1,5 +1,7 @@
 package net.konzol.easunjava.application.inverter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
@@ -17,7 +19,17 @@ public class SerialConnection {
 
     private SerialConnection() {
 
-        Arrays.stream(SerialPort.getCommPorts()).forEach(port -> log.info(port.getDescriptivePortName()));
+        ObjectMapper mapper = new ObjectMapper();
+
+        Arrays.stream(SerialPort.getCommPorts())
+                .forEach(port ->
+                {
+                    try {
+                        log.info(mapper.writeValueAsString(port));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
         comPort = SerialPort.getCommPorts()[0];
         comPort.setBaudRate(2400);
