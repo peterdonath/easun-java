@@ -17,7 +17,7 @@ public class StatusService {
     @Getter
     private DeviceStatus deviceStatus = DeviceStatus.builder().build();
 
-    @Scheduled(cron = "10 * * * *")
+    @Scheduled(cron = "10 * * * * *")
     private void scheduleUpdate() {
         serialConnection.sendBytes(HexUtils.fromHexString("5150494753B7A90D"));
     }
