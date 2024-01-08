@@ -16,6 +16,7 @@ public class DeviceStatus {
     private Integer outputApparentPower;
     private Integer outputActivePower;
     private Integer busVoltage;
+    private Integer outputLoadPercent;
     private Double batteryVoltage;
     private Integer batteryChargeCurrent;
     private Integer batteryStateOfCharge;

@@ -44,15 +44,16 @@ public class StatusService {
         deviceStatus.setOutputFrequency(Double.parseDouble(data[3]));
         deviceStatus.setOutputApparentPower(Integer.parseInt(data[4]));
         deviceStatus.setOutputActivePower(Integer.parseInt(data[5]));
-        deviceStatus.setBusVoltage(Integer.parseInt(data[6]));
-        deviceStatus.setBatteryVoltage(Double.parseDouble(data[7]));
-        deviceStatus.setBatteryChargeCurrent(Integer.parseInt(data[8]));
-        deviceStatus.setBatteryStateOfCharge(Integer.parseInt(data[9]));
-        deviceStatus.setInverterHeatSinkTemperature(Integer.parseInt(data[10]));
-        deviceStatus.setSolarInputCurrent(Integer.parseInt(data[11]));
-        deviceStatus.setSolarInputVoltage(Double.parseDouble(data[12]));
-        deviceStatus.setBatteryVoltageScc(Double.parseDouble(data[13]));
-        deviceStatus.setBatteryDischargeCurrent(Integer.parseInt(data[14]));
+        deviceStatus.setOutputLoadPercent(Integer.parseInt(data[6]));
+        deviceStatus.setBusVoltage(Integer.parseInt(data[7]));
+        deviceStatus.setBatteryVoltage(Double.parseDouble(data[8]));
+        deviceStatus.setBatteryChargeCurrent(Integer.parseInt(data[9]));
+        deviceStatus.setBatteryStateOfCharge(Integer.parseInt(data[10]));
+        deviceStatus.setInverterHeatSinkTemperature(Integer.parseInt(data[11]));
+        deviceStatus.setSolarInputCurrent(Integer.parseInt(data[12]));
+        deviceStatus.setSolarInputVoltage(Double.parseDouble(data[13]));
+        deviceStatus.setBatteryVoltageScc(Double.parseDouble(data[14]));
+        deviceStatus.setBatteryDischargeCurrent(Integer.parseInt(data[15]));
 
         try {
             log.info("DeviceStatus: {}", mapper.writeValueAsString(deviceStatus));

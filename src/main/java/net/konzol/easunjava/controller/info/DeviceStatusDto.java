@@ -14,6 +14,7 @@ public class DeviceStatusDto {
     private String outputFrequency;
     private String outputApparentPower;
     private String outputActivePower;
+    private String outputLoadPercent;
     private String busVoltage;
     private String batteryVoltage;
     private String batteryChargeCurrent;
@@ -32,6 +33,7 @@ public class DeviceStatusDto {
                 .outputFrequency(deviceStatus.getOutputFrequency().toString().concat("Hz"))
                 .outputApparentPower(deviceStatus.getOutputApparentPower().toString().concat("VA"))
                 .outputActivePower(deviceStatus.getOutputActivePower().toString().concat("W"))
+                .outputLoadPercent(deviceStatus.getOutputLoadPercent().toString().concat("%"))
                 .busVoltage(deviceStatus.getBusVoltage().toString().concat("V"))
                 .batteryVoltage(deviceStatus.getBatteryVoltage().toString().concat("V"))
                 .batteryChargeCurrent(deviceStatus.getBatteryChargeCurrent().toString().concat("A"))
