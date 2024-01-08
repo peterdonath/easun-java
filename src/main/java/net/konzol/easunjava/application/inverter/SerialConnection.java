@@ -6,6 +6,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -17,7 +19,11 @@ public class SerialConnection {
 
     private final SerialPort comPort;
 
-    private SerialConnection() {
+    private final ApplicationEventPublisher eventPublisher;
+
+    private SerialConnection(@Autowired ApplicationEventPublisher eventPublisher) {
+
+        this.eventPublisher = eventPublisher;
 
         Arrays.stream(SerialPort.getCommPorts())
                 .forEach(port ->
@@ -64,6 +70,7 @@ public class SerialConnection {
             byte[] delimitedMessage = event.getReceivedData();
             String message = new String(delimitedMessage, StandardCharsets.UTF_8);
             log.info("Received the following delimited message: {}", message);
+            eventPublisher.publishEvent(new SerialMessageEvent(message));
         }
     }
 }
