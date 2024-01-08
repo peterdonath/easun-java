@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -15,6 +16,9 @@ public class SerialConnection {
     private final SerialPort comPort;
 
     private SerialConnection() {
+
+        Arrays.stream(SerialPort.getCommPorts()).forEach(port -> log.info(port.getDescriptivePortName()));
+
         comPort = SerialPort.getCommPorts()[0];
         comPort.setBaudRate(2400);
         comPort.openPort();
