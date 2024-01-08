@@ -51,7 +51,7 @@ public class SerialConnection {
 
         @Override
         public byte[] getMessageDelimiter() {
-            return new byte[]{(byte) 0x28};
+            return new byte[]{(byte) 0x0A};
         }
 
         @Override
