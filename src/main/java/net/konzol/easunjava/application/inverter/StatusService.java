@@ -1,13 +1,17 @@
 package net.konzol.easunjava.application.inverter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Service
 public class StatusService {
@@ -40,5 +44,12 @@ public class StatusService {
         deviceStatus.setSolarInputVoltage(Double.parseDouble(data[12]));
         deviceStatus.setBatteryVoltageScc(Double.parseDouble(data[13]));
         deviceStatus.setBatteryDischargeCurrent(Integer.parseInt(data[14]));
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            log.info("DeviceStatus: {}", mapper.writeValueAsString(deviceStatus));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
