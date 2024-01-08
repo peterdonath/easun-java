@@ -17,7 +17,7 @@ public class StatusService {
     @Getter
     private DeviceStatus deviceStatus = DeviceStatus.builder().build();
 
-    @Scheduled(cron = "10 * * * * *")
+    @Scheduled(cron = "*/10 * * * * *")
     private void scheduleUpdate() {
         serialConnection.sendBytes(HexUtils.fromHexString("5150494753B7A90D"));
     }
@@ -25,7 +25,7 @@ public class StatusService {
     @EventListener
     public void serialMessageEventHandler(SerialMessageEvent event) {
         String[] data = event.getMessage().split(" ");
-        deviceStatus.setGridVoltage(Double.parseDouble(data[0]));
+        deviceStatus.setGridVoltage(Double.parseDouble(data[0].replace("(","")));
         deviceStatus.setGridFrequency(Double.parseDouble(data[1]));
         deviceStatus.setOutputVoltage(Double.parseDouble(data[2]));
         deviceStatus.setOutputFrequency(Double.parseDouble(data[3]));
