@@ -49,6 +49,7 @@ public class StatusService {
         try {
             log.info("DeviceStatus: {}", mapper.writeValueAsString(deviceStatus));
         } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }
