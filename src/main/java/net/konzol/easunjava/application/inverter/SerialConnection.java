@@ -28,7 +28,7 @@ public class SerialConnection {
                             port.getParity(),
                             port.getNumDataBits(),
                             port.getNumStopBits(),
-                            port.getPortDescription())
+                            port.getPortDescription());
                 });
 
         comPort = SerialPort.getCommPorts()[0];
