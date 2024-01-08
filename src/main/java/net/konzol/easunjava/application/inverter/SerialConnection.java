@@ -32,8 +32,8 @@ public class SerialConnection {
                 });
 
         comPort = SerialPort.getCommPorts()[0];
-        comPort.setBaudRate(2400);
-        comPort.setParity(1);
+        comPort.setBaudRate(19200);
+        comPort.setParity(0);
         comPort.openPort();
         MessageListener listener = new MessageListener();
         comPort.addDataListener(listener);
