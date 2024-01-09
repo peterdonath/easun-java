@@ -41,7 +41,7 @@ public class DeviceStatusDto {
                 .inverterHeatSinkTemperature(deviceStatus.getInverterHeatSinkTemperature().toString().concat("C"))
                 .solarInputCurrent(deviceStatus.getSolarInputCurrent().toString().concat("A"))
                 .solarInputVoltage(deviceStatus.getSolarInputVoltage().toString().concat("V"))
-                .batteryVoltageScc(deviceStatus.getBatteryVoltageScc().toString().concat("%"))
+                .batteryVoltageScc(deviceStatus.getBatteryVoltageScc().toString().concat("V"))
                 .batteryDischargeCurrent(deviceStatus.getBatteryDischargeCurrent().toString().concat("A"))
                 .build();
     }
