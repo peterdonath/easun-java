@@ -1,8 +1,5 @@
 package net.konzol.easunjava.controller.info;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import net.konzol.easunjava.application.inverter.DeviceStatus;
 import net.konzol.easunjava.application.inverter.StatusService;
@@ -18,12 +15,9 @@ public class InverterInfoController {
     private final StatusService statusService;
 
     @GetMapping("/info")
-    public ResponseEntity<String> getDeviceInfo() throws JsonProcessingException {
+    public ResponseEntity<DeviceStatusDto> getDeviceInfo() {
         DeviceStatus deviceStatus = statusService.getDeviceStatus();
 
-        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-        String prettyJson = mapper.writeValueAsString(DeviceStatusDto.of(deviceStatus));
-
-        return ResponseEntity.ok(prettyJson);
+        return ResponseEntity.ok(DeviceStatusDto.of(deviceStatus));
     }
 }
