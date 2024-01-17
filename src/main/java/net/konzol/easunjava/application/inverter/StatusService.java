@@ -3,7 +3,6 @@ package net.konzol.easunjava.application.inverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.konzol.easunjava.domain.inverter.Inverter;
 import net.konzol.easunjava.domain.inverter.InverterRepository;
@@ -15,28 +14,38 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Service
 public class StatusService {
 
-    private final SerialConnection serialConnection;
-
-    private final StatisticsRepository statisticsRepository;
-
-    private final InverterRepository inverterRepository;
-
     private static final double POWER_FACTOR = 360.0;
+    private final SerialConnectionService serialConnectionService;
+    private final StatisticsRepository statisticsRepository;
+    private final InverterRepository inverterRepository;
+    private final ObjectMapper mapper;
 
     @Getter
-    private DeviceStatus deviceStatus = DeviceStatus.builder().build();
+    private final List<DeviceStatus> deviceStatusList;
+
+    private StatusService(@Autowired SerialConnectionService serialConnectionService,
+                          @Autowired StatisticsRepository statisticsRepository,
+                          @Autowired InverterRepository inverterRepository) {
+        this.serialConnectionService = serialConnectionService;
+        this.statisticsRepository = statisticsRepository;
+        this.inverterRepository = inverterRepository;
+
+        deviceStatusList = new ArrayList<>();
+        mapper = new ObjectMapper();
+    }
 
     @Scheduled(cron = "*/10 * * * * *")
     private void scheduleUpdate() {
-        serialConnection.sendBytes(HexUtils.fromHexString("5150494753B7A90D"));
+        serialConnectionService.sendBytes(HexUtils.fromHexString("5150494753B7A90D"));
     }
 
     @EventListener
@@ -47,15 +56,36 @@ public class StatusService {
             return;
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            log.info("MessageParsing: {}", mapper.writeValueAsString(data));
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
+        Optional<Inverter> inverterOptional = inverterRepository.findByPortNumber(event.getPortNumber());
+        if (!inverterOptional.isPresent()) {
+            return;
         }
 
-        deviceStatus.setGridVoltage(Double.parseDouble(data[0].replace("(","")));
+        this.logData(data);
+
+        Optional<DeviceStatus> deviceStatusOptional = deviceStatusList.stream()
+                .filter(deviceStatus -> deviceStatus.getInverter().getPortNumber().equals(event.getPortNumber()))
+                .findAny();
+
+        DeviceStatus deviceStatus = null;
+
+        if (deviceStatusOptional.isPresent()) {
+            deviceStatus = this.updateValues(deviceStatusOptional.get(), data);
+        } else {
+            deviceStatus = DeviceStatus.builder()
+                    .inverter(inverterOptional.get())
+                    .build();
+            this.updateValues(deviceStatus, data);
+
+            deviceStatusList.add(deviceStatus);
+        }
+
+        this.updateDatabase(deviceStatus);
+    }
+
+
+    private DeviceStatus updateValues(DeviceStatus deviceStatus, String[] data) {
+        deviceStatus.setGridVoltage(Double.parseDouble(data[0].replace("(", "")));
         deviceStatus.setGridFrequency(Double.parseDouble(data[1]));
         deviceStatus.setOutputVoltage(Double.parseDouble(data[2]));
         deviceStatus.setOutputFrequency(Double.parseDouble(data[3]));
@@ -72,17 +102,30 @@ public class StatusService {
         deviceStatus.setBatteryVoltageScc(Double.parseDouble(data[14]));
         deviceStatus.setBatteryDischargeCurrent(Integer.parseInt(data[15]));
 
+        this.logMessage(deviceStatus);
+
+        return deviceStatus;
+    }
+
+    private void logMessage(DeviceStatus deviceStatus) {
         try {
             log.info("DeviceStatus: {}", mapper.writeValueAsString(deviceStatus));
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
-
-        this.updateDatabase();
     }
 
-    private void updateDatabase() {
+    private void logData(String[] data) {
+        try {
+            log.info("MessageParsing: {}", mapper.writeValueAsString(data));
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void updateDatabase(DeviceStatus deviceStatus) {
 
         Double solarPower = deviceStatus.getSolarInputVoltage() * deviceStatus.getSolarInputCurrent();
         Double batteryCharged = deviceStatus.getBatteryVoltageScc() * deviceStatus.getBatteryChargeCurrent();
@@ -96,7 +139,8 @@ public class StatusService {
 
         Date today = new Date();
 
-        Optional<Statistics> statisticsOptional = statisticsRepository.findByDate(today);
+        Optional<Statistics> statisticsOptional =
+                statisticsRepository.findByDateAndInverter(today, deviceStatus.getInverter());
 
         if (statisticsOptional.isPresent()) {
             Statistics statistics = statisticsOptional.get();
@@ -108,11 +152,9 @@ public class StatusService {
 
             statisticsRepository.save(statistics);
         } else {
-            Optional<Inverter> inverterOptional = inverterRepository.findById(1L);
-
             Statistics statistics = Statistics.builder()
                     .date(today)
-                    .inverter(inverterOptional.orElse(null))
+                    .inverter(deviceStatus.getInverter())
                     .solarPower(solarPower)
                     .batteryCharged(batteryCharged)
                     .batteryDischarged(batteryDischarged)

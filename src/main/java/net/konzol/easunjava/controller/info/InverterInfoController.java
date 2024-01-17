@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RestController
 public class InverterInfoController {
@@ -15,9 +18,13 @@ public class InverterInfoController {
     private final StatusService statusService;
 
     @GetMapping("/info")
-    public ResponseEntity<DeviceStatusDto> getDeviceInfo() {
-        DeviceStatus deviceStatus = statusService.getDeviceStatus();
+    public ResponseEntity<List<DeviceStatusDto>> getDeviceInfo() {
+        List<DeviceStatusDto> deviceStatusDtoList =
+                statusService.getDeviceStatusList()
+                .stream()
+                .map(DeviceStatusDto::of)
+                .toList();
 
-        return ResponseEntity.ok(DeviceStatusDto.of(deviceStatus));
+        return ResponseEntity.ok(deviceStatusDtoList);
     }
 }
