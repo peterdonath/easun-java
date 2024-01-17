@@ -2,6 +2,7 @@ package net.konzol.easunjava.domain.statistics;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.konzol.easunjava.domain.inverter.Inverter;
 
 import java.util.Date;
 
@@ -20,7 +21,8 @@ public class Statistics {
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    private Long inverterId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Inverter inverter;
 
     private Double solarPower;
 

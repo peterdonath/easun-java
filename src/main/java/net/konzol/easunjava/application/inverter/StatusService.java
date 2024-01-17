@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.konzol.easunjava.domain.inverter.Inverter;
+import net.konzol.easunjava.domain.inverter.InverterRepository;
 import net.konzol.easunjava.domain.statistics.Statistics;
 import net.konzol.easunjava.domain.statistics.StatisticsRepository;
 import org.apache.tomcat.util.buf.HexUtils;
@@ -23,7 +25,9 @@ public class StatusService {
 
     private final SerialConnection serialConnection;
 
-    private final StatisticsRepository repository;
+    private final StatisticsRepository statisticsRepository;
+
+    private final InverterRepository inverterRepository;
 
     private static final double POWER_FACTOR = 360.0;
 
@@ -92,7 +96,7 @@ public class StatusService {
 
         Date today = new Date();
 
-        Optional<Statistics> statisticsOptional = repository.findByDate(today);
+        Optional<Statistics> statisticsOptional = statisticsRepository.findByDate(today);
 
         if (statisticsOptional.isPresent()) {
             Statistics statistics = statisticsOptional.get();
@@ -102,17 +106,20 @@ public class StatusService {
             statistics.setBatteryDischarged(statistics.getBatteryDischarged() + batteryDischarged);
             statistics.setActiveConsumption(statistics.getActiveConsumption() + activeConsumption);
 
-            repository.save(statistics);
+            statisticsRepository.save(statistics);
         } else {
+            Optional<Inverter> inverterOptional = inverterRepository.findById(1L);
+
             Statistics statistics = Statistics.builder()
                     .date(today)
+                    .inverter(inverterOptional.orElse(null))
                     .solarPower(solarPower)
                     .batteryCharged(batteryCharged)
                     .batteryDischarged(batteryDischarged)
                     .activeConsumption(activeConsumption)
                     .build();
 
-            repository.save(statistics);
+            statisticsRepository.save(statistics);
         }
     }
 }
