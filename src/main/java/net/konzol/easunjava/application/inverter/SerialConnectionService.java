@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class SerialConnectionService {
                                     @Autowired ApplicationEventPublisher eventPublisher) {
         this.inverterRepository = inverterRepository;
         this.eventPublisher = eventPublisher;
+        this.connections = new ArrayList<>();
 
         Arrays.stream(SerialPort.getCommPorts())
                 .forEach(port ->
