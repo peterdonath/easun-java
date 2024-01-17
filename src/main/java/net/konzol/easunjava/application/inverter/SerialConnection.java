@@ -30,6 +30,8 @@ public class SerialConnection implements Runnable {
     @Override
     public void run() {
 
+        log.info("Serial Thread started: {}", portNumber);
+
         comPort = SerialPort.getCommPorts()[portNumber];
         comPort.setBaudRate(2400);
         comPort.setParity(0);
