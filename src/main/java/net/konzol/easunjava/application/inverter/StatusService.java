@@ -30,6 +30,10 @@ public class StatusService {
     public void serialMessageEventHandler(SerialMessageEvent event) {
         String[] data = event.getMessage().split(" ");
 
+        if (data.length != 16) {
+            return;
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             log.info("MessageParsing: {}", mapper.writeValueAsString(data));
