@@ -25,7 +25,7 @@ public class StatusService {
 
     private final StatisticsRepository repository;
 
-    private static final double POWER_FACTOR = 360000.0;
+    private static final double POWER_FACTOR = 360.0;
 
     @Getter
     private DeviceStatus deviceStatus = DeviceStatus.builder().build();
