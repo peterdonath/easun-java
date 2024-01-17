@@ -37,6 +37,9 @@ public class SerialConnection implements Runnable {
         MessageListener listener = new MessageListener();
         comPort.addDataListener(listener);
 
+        while (true) {
+
+        }
     }
 
     private final class MessageListener implements SerialPortMessageListener {
