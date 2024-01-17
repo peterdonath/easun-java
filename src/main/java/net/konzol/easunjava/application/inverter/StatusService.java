@@ -5,11 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.konzol.easunjava.domain.statistics.Statistics;
+import net.konzol.easunjava.domain.statistics.StatisticsRepository;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -17,6 +22,10 @@ import org.springframework.stereotype.Service;
 public class StatusService {
 
     private final SerialConnection serialConnection;
+
+    private final StatisticsRepository repository;
+
+    private static final double POWER_FACTOR = 360000.0;
 
     @Getter
     private DeviceStatus deviceStatus = DeviceStatus.builder().build();
@@ -64,6 +73,46 @@ public class StatusService {
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
+        }
+
+        this.updateDatabase();
+    }
+
+    private void updateDatabase() {
+
+        Double solarPower = deviceStatus.getSolarInputVoltage() * deviceStatus.getSolarInputCurrent();
+        Double batteryCharged = deviceStatus.getBatteryVoltageScc() * deviceStatus.getBatteryChargeCurrent();
+        Double batteryDischarged = deviceStatus.getBatteryVoltage() * deviceStatus.getBatteryDischargeCurrent();
+        Double activeConsumption = deviceStatus.getOutputActivePower().doubleValue();
+
+        solarPower = solarPower / POWER_FACTOR;
+        batteryCharged = batteryCharged / POWER_FACTOR;
+        batteryDischarged = batteryDischarged / POWER_FACTOR;
+        activeConsumption = activeConsumption / POWER_FACTOR;
+
+        Date today = new Date();
+
+        Optional<Statistics> statisticsOptional = repository.findByDate(today);
+
+        if (statisticsOptional.isPresent()) {
+            Statistics statistics = statisticsOptional.get();
+
+            statistics.setSolarPower(statistics.getSolarPower() + solarPower);
+            statistics.setBatteryCharged(statistics.getBatteryCharged() + batteryCharged);
+            statistics.setBatteryDischarged(statistics.getBatteryDischarged() + batteryDischarged);
+            statistics.setActiveConsumption(statistics.getActiveConsumption() + activeConsumption);
+
+            repository.save(statistics);
+        } else {
+            Statistics statistics = Statistics.builder()
+                    .date(today)
+                    .solarPower(solarPower)
+                    .batteryCharged(batteryCharged)
+                    .batteryDischarged(batteryDischarged)
+                    .activeConsumption(activeConsumption)
+                    .build();
+
+            repository.save(statistics);
         }
     }
 }
