@@ -30,7 +30,7 @@ public class StatusService {
     public void serialMessageEventHandler(SerialMessageEvent event) {
         String[] data = event.getMessage().split(" ");
 
-        if (data.length != 16) {
+        if (data.length != 21) {
             return;
         }
 
