@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SerialMessageEvent {
 
+    private Integer portNumber;
     private String message;
 }
