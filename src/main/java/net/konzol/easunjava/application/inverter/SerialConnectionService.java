@@ -40,6 +40,8 @@ public class SerialConnectionService {
                 });
 
         inverterRepository.findAll().forEach(inverter -> {
+            log.info("Starting serial connection to serial port: {}", inverter.getPortNumber());
+
             SerialConnection serialConnection = new SerialConnection(eventPublisher, inverter.getPortNumber());
             Thread serialThread = new Thread(serialConnection);
             serialThread.start();
