@@ -26,7 +26,17 @@ public class SerialConnectionService {
         this.inverterRepository = inverterRepository;
         this.eventPublisher = eventPublisher;
         this.connections = new ArrayList<>();
+    }
 
+    public void sendBytes(byte[] bytes) {
+
+        if (connections.size() == 0) {
+            this.initializeConnections();
+        }
+        connections.forEach(connection -> connection.sendBytes(bytes));
+    }
+
+    private void initializeConnections() {
         Arrays.stream(SerialPort.getCommPorts())
                 .forEach(port ->
                 {
@@ -48,9 +58,5 @@ public class SerialConnectionService {
 
             connections.add(serialConnection);
         });
-    }
-
-    public void sendBytes(byte[] bytes) {
-        connections.forEach(connection -> connection.sendBytes(bytes));
     }
 }
