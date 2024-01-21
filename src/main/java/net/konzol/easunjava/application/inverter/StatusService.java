@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.konzol.easunjava.application.metrics.InverterMetrics;
 import net.konzol.easunjava.domain.inverter.Inverter;
 import net.konzol.easunjava.domain.inverter.InverterRepository;
 import net.konzol.easunjava.domain.statistics.Statistics;
@@ -27,6 +28,7 @@ public class StatusService {
     private final SerialConnectionService serialConnectionService;
     private final StatisticsRepository statisticsRepository;
     private final InverterRepository inverterRepository;
+    private final InverterMetrics inverterMetrics;
     private final ObjectMapper mapper;
 
     @Getter
@@ -34,10 +36,12 @@ public class StatusService {
 
     private StatusService(@Autowired SerialConnectionService serialConnectionService,
                           @Autowired StatisticsRepository statisticsRepository,
-                          @Autowired InverterRepository inverterRepository) {
+                          @Autowired InverterRepository inverterRepository,
+                          @Autowired InverterMetrics inverterMetrics) {
         this.serialConnectionService = serialConnectionService;
         this.statisticsRepository = statisticsRepository;
         this.inverterRepository = inverterRepository;
+        this.inverterMetrics = inverterMetrics;
 
         deviceStatusList = new ArrayList<>();
         mapper = new ObjectMapper();
@@ -78,6 +82,7 @@ public class StatusService {
             this.updateValues(deviceStatus, data);
 
             deviceStatusList.add(deviceStatus);
+            inverterMetrics.registerDeviceStatusMetrics(deviceStatus);
         }
 
         this.updateDatabase(deviceStatus);
