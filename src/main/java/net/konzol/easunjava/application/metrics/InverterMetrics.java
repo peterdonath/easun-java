@@ -16,6 +16,7 @@ public class InverterMetrics {
 
     public void registerDeviceStatusMetrics(DeviceStatus deviceStatus) {
         Inverter inverter = deviceStatus.getInverter();
+
         registerDoubleGauge(inverter, "grid_voltage", deviceStatus.getGridVoltage());
         registerDoubleGauge(inverter, "grid_frequency", deviceStatus.getGridFrequency());
         registerDoubleGauge(inverter, "output_voltage", deviceStatus.getOutputVoltage());
@@ -35,13 +36,13 @@ public class InverterMetrics {
     }
 
     private void registerDoubleGauge(Inverter inverter, String metric, Double value) {
-        Gauge gauge = Gauge.builder(metric, value, Double::doubleValue)
+        Gauge gauge = Gauge.builder(metric, value, Double::valueOf)
                 .tag("inverter", inverter.getPortNumber().toString())
                 .register(meterRegistry);
     }
 
     private void registerIntegerGauge(Inverter inverter, String metric, Integer value) {
-        Gauge gauge = Gauge.builder(metric, value, Integer::intValue)
+        Gauge gauge = Gauge.builder(metric, value, Integer::valueOf)
                 .tag("inverter", inverter.getPortNumber().toString())
                 .register(meterRegistry);
     }
