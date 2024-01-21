@@ -21,15 +21,6 @@ public class SerialConnection implements Runnable {
         this.eventPublisher = eventPublisher;
         this.portNumber = portNumber;
 
-    }
-
-    public void sendBytes(byte[] bytes) {
-        comPort.writeBytes(bytes, bytes.length);
-    }
-
-    @Override
-    public void run() {
-
         log.info("Serial Thread started: {}", portNumber);
 
         comPort = SerialPort.getCommPorts()[portNumber];
@@ -38,6 +29,14 @@ public class SerialConnection implements Runnable {
         comPort.openPort();
         MessageListener listener = new MessageListener();
         comPort.addDataListener(listener);
+    }
+
+    public void sendBytes(byte[] bytes) {
+        comPort.writeBytes(bytes, bytes.length);
+    }
+
+    @Override
+    public void run() {
 
         while (true) {
 
