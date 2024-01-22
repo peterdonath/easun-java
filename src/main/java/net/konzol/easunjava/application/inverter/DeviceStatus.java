@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.konzol.easunjava.domain.inverter.Inverter;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Builder
 @Getter
 @Setter
@@ -16,7 +18,7 @@ public class DeviceStatus {
     private Double outputVoltage;
     private Double outputFrequency;
     private Integer outputApparentPower;
-    private Integer outputActivePower;
+    private AtomicInteger outputActivePower;
     private Integer busVoltage;
     private Integer outputLoadPercent;
     private Double batteryVoltage;

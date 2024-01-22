@@ -8,6 +8,8 @@ import net.konzol.easunjava.domain.inverter.Inverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Component
 public class InverterMetrics {
@@ -22,7 +24,7 @@ public class InverterMetrics {
         registerDoubleGauge(inverter, "output_voltage", deviceStatus.getOutputVoltage());
         registerDoubleGauge(inverter, "output_frequency", deviceStatus.getOutputFrequency());
         registerIntegerGauge(inverter, "output_apparent_power", deviceStatus.getOutputApparentPower());
-        registerIntegerGauge(inverter, "output_active_power", deviceStatus.getOutputActivePower());
+        registerAtomicIntegerGauge(inverter, "output_active_power", deviceStatus.getOutputActivePower());
         registerIntegerGauge(inverter, "bus_voltage", deviceStatus.getBusVoltage());
         registerIntegerGauge(inverter, "output_load_percent", deviceStatus.getOutputLoadPercent());
         registerDoubleGauge(inverter, "battery_voltage", deviceStatus.getBatteryVoltage());
@@ -43,6 +45,12 @@ public class InverterMetrics {
 
     private void registerIntegerGauge(Inverter inverter, String metric, Integer value) {
         Gauge gauge = Gauge.builder(metric, value, Integer::valueOf)
+                .tag("inverter", inverter.getPortNumber().toString())
+                .register(meterRegistry);
+    }
+
+    private void registerAtomicIntegerGauge(Inverter inverter, String metric, AtomicInteger value) {
+        Gauge gauge = Gauge.builder(metric, value, AtomicInteger::intValue)
                 .tag("inverter", inverter.getPortNumber().toString())
                 .register(meterRegistry);
     }
