@@ -134,7 +134,7 @@ public class StatusService {
     private void updateDatabase(DeviceStatus deviceStatus) {
 
         Double solarPower = deviceStatus.getSolarInputVoltage() * deviceStatus.getSolarInputCurrent();
-        Double batteryCharged = deviceStatus.getBatteryVoltageScc() * deviceStatus.getBatteryChargeCurrent();
+        Double batteryCharged = deviceStatus.getBatteryVoltage() * deviceStatus.getBatteryChargeCurrent();
         Double batteryDischarged = deviceStatus.getBatteryVoltage() * deviceStatus.getBatteryDischargeCurrent();
         Double activeConsumption = deviceStatus.getOutputActivePower().doubleValue();
 
