@@ -24,8 +24,11 @@ public class DeviceStatusDto {
     private String solarInputVoltage;
     private String batteryVoltageScc;
     private String batteryDischargeCurrent;
+    private String solarApparentPower;
 
     public static DeviceStatusDto of(DeviceStatus deviceStatus){
+        Double solarPower = deviceStatus.getSolarInputCurrent() * deviceStatus.getBatteryVoltageScc();
+
         return DeviceStatusDto.builder()
                 .gridVoltage(deviceStatus.getGridVoltage().toString().concat("V"))
                 .gridFrequency(deviceStatus.getGridFrequency().toString().concat("Hz"))
@@ -43,6 +46,7 @@ public class DeviceStatusDto {
                 .solarInputVoltage(deviceStatus.getSolarInputVoltage().toString().concat("V"))
                 .batteryVoltageScc(deviceStatus.getBatteryVoltageScc().toString().concat("V"))
                 .batteryDischargeCurrent(deviceStatus.getBatteryDischargeCurrent().toString().concat("A"))
+                .solarApparentPower(solarPower.toString().concat("W"))
                 .build();
     }
 }
