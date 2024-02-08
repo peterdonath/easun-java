@@ -24,7 +24,7 @@ public class InverterMetrics {
         registerDoubleGauge(inverter, "output_voltage", deviceStatus.getOutputVoltage());
         registerDoubleGauge(inverter, "output_frequency", deviceStatus.getOutputFrequency());
         registerIntegerGauge(inverter, "output_apparent_power", deviceStatus.getOutputApparentPower());
-        registerIntegerGauge(inverter, "output_active_power", deviceStatus.getOutputActivePower());
+        // registerIntegerGauge(inverter, "output_active_power", deviceStatus.getOutputActivePower());
         registerIntegerGauge(inverter, "bus_voltage", deviceStatus.getBusVoltage());
         registerIntegerGauge(inverter, "output_load_percent", deviceStatus.getOutputLoadPercent());
         registerDoubleGauge(inverter, "battery_voltage", deviceStatus.getBatteryVoltage());
@@ -36,7 +36,9 @@ public class InverterMetrics {
         registerDoubleGauge(inverter, "battery_voltage_scc", deviceStatus.getBatteryVoltageScc());
         registerIntegerGauge(inverter, "battery_discharge_current", deviceStatus.getBatteryDischargeCurrent());
 
-        meterRegistry.getMeters().forEach(meter -> log.info(meter.getId().toString()));
+        Gauge.builder("ouput_active_power", deviceStatus, DeviceStatus::getOutputActivePower)
+                .tag("inverter", inverter.getPortNumber().toString())
+                .register(meterRegistry);
     }
 
     private void registerDoubleGauge(Inverter inverter, String metric, Double value) {
