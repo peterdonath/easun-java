@@ -21,4 +21,6 @@ public class Inverter {
     private String serialNumber;
 
     private Integer portNumber;
+
+    private Integer pvSize;
 }

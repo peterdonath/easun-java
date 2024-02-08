@@ -3,6 +3,7 @@ package net.konzol.easunjava.application.metrics;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.konzol.easunjava.application.inverter.DeviceStatus;
 import net.konzol.easunjava.domain.inverter.Inverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Component
 public class InverterMetrics {
@@ -35,6 +37,8 @@ public class InverterMetrics {
         registerDoubleGauge(inverter, "solar_input_voltage", deviceStatus.getSolarInputVoltage());
         registerDoubleGauge(inverter, "battery_voltage_scc", deviceStatus.getBatteryVoltageScc());
         registerIntegerGauge(inverter, "battery_discharge_current", deviceStatus.getBatteryDischargeCurrent());
+
+        meterRegistry.getMeters().forEach(meter -> log.info(meter.getId().toString()));
     }
 
     private void registerDoubleGauge(Inverter inverter, String metric, Double value) {
