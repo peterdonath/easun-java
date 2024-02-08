@@ -9,6 +9,8 @@ import net.konzol.easunjava.domain.inverter.Inverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.function.ToDoubleFunction;
+
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Component
@@ -19,38 +21,31 @@ public class InverterMetrics {
     public void updateDeviceStatusMetrics(DeviceStatus deviceStatus) {
         Inverter inverter = deviceStatus.getInverter();
 
-        registerDoubleGauge(inverter, "grid_voltage", deviceStatus.getGridVoltage());
-        registerDoubleGauge(inverter, "grid_frequency", deviceStatus.getGridFrequency());
-        registerDoubleGauge(inverter, "output_voltage", deviceStatus.getOutputVoltage());
-        registerDoubleGauge(inverter, "output_frequency", deviceStatus.getOutputFrequency());
-        registerIntegerGauge(inverter, "output_apparent_power", deviceStatus.getOutputApparentPower());
-        // registerIntegerGauge(inverter, "output_active_power", deviceStatus.getOutputActivePower());
-        registerIntegerGauge(inverter, "bus_voltage", deviceStatus.getBusVoltage());
-        registerIntegerGauge(inverter, "output_load_percent", deviceStatus.getOutputLoadPercent());
-        registerDoubleGauge(inverter, "battery_voltage", deviceStatus.getBatteryVoltage());
-        registerIntegerGauge(inverter, "battery_charge_current", deviceStatus.getBatteryChargeCurrent());
-        registerIntegerGauge(inverter, "battery_state_of_charge", deviceStatus.getBatteryStateOfCharge());
-        registerIntegerGauge(inverter, "inverter_heat_sink_temp", deviceStatus.getInverterHeatSinkTemperature());
-        registerIntegerGauge(inverter, "solar_input_current", deviceStatus.getSolarInputCurrent());
-        registerDoubleGauge(inverter, "solar_input_voltage", deviceStatus.getSolarInputVoltage());
-        registerDoubleGauge(inverter, "battery_voltage_scc", deviceStatus.getBatteryVoltageScc());
-        registerIntegerGauge(inverter, "battery_discharge_current", deviceStatus.getBatteryDischargeCurrent());
+        registerGauge(inverter, "grid_voltage", deviceStatus, DeviceStatus::getGridVoltage);
+        registerGauge(inverter, "grid_frequency", deviceStatus, DeviceStatus::getGridFrequency);
+        registerGauge(inverter, "output_voltage", deviceStatus, DeviceStatus::getOutputVoltage);
+        registerGauge(inverter, "output_frequency", deviceStatus, DeviceStatus::getOutputFrequency);
+        registerGauge(inverter, "output_apparent_power", deviceStatus, DeviceStatus::getOutputApparentPower);
+        registerGauge(inverter, "output_active_power", deviceStatus, DeviceStatus::getOutputActivePower);
+        registerGauge(inverter, "bus_voltage", deviceStatus, DeviceStatus::getBusVoltage);
+        registerGauge(inverter, "output_load_percent", deviceStatus, DeviceStatus::getOutputLoadPercent);
+        registerGauge(inverter, "battery_voltage", deviceStatus, DeviceStatus::getBatteryVoltage);
+        registerGauge(inverter, "battery_charge_current", deviceStatus, DeviceStatus::getBatteryChargeCurrent);
+        registerGauge(inverter, "battery_state_of_charge", deviceStatus, DeviceStatus::getBatteryStateOfCharge);
+        registerGauge(inverter, "inverter_heat_sink_temp", deviceStatus, DeviceStatus::getInverterHeatSinkTemperature);
+        registerGauge(inverter, "solar_input_current", deviceStatus, DeviceStatus::getSolarInputCurrent);
+        registerGauge(inverter, "solar_input_voltage", deviceStatus, DeviceStatus::getSolarInputVoltage);
+        registerGauge(inverter, "battery_voltage_scc", deviceStatus, DeviceStatus::getBatteryVoltageScc);
+        registerGauge(inverter, "battery_discharge_current", deviceStatus, DeviceStatus::getBatteryDischargeCurrent);
 
-        Gauge.builder("output_active_power", deviceStatus, DeviceStatus::getOutputActivePower)
+    }
+
+    private void registerGauge(Inverter inverter,
+                               String metric,
+                               DeviceStatus deviceStatus,
+                               ToDoubleFunction<DeviceStatus> function) {
+        Gauge.builder(metric, deviceStatus, function)
                 .tag("inverter", inverter.getPortNumber().toString())
                 .register(meterRegistry);
     }
-
-    private void registerDoubleGauge(Inverter inverter, String metric, Double value) {
-        Gauge gauge = Gauge.builder(metric, value, Double::valueOf)
-                .tag("inverter", inverter.getPortNumber().toString())
-                .register(meterRegistry);
-    }
-
-    private void registerIntegerGauge(Inverter inverter, String metric, Integer value) {
-        Gauge gauge = Gauge.builder(metric, value, Double::valueOf)
-                .tag("inverter", inverter.getPortNumber().toString())
-                .register(meterRegistry);
-    }
-
 }
