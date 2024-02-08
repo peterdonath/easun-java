@@ -36,7 +36,7 @@ public class InverterMetrics {
         registerDoubleGauge(inverter, "battery_voltage_scc", deviceStatus.getBatteryVoltageScc());
         registerIntegerGauge(inverter, "battery_discharge_current", deviceStatus.getBatteryDischargeCurrent());
 
-        Gauge.builder("ouput_active_power", deviceStatus, DeviceStatus::getOutputActivePower)
+        Gauge.builder("output_active_power", deviceStatus, DeviceStatus::getOutputActivePower)
                 .tag("inverter", inverter.getPortNumber().toString())
                 .register(meterRegistry);
     }
