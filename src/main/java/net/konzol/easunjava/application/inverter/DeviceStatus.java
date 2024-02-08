@@ -18,7 +18,7 @@ public class DeviceStatus {
     private Double outputVoltage;
     private Double outputFrequency;
     private Integer outputApparentPower;
-    private AtomicInteger outputActivePower;
+    private Integer outputActivePower;
     private Integer busVoltage;
     private Integer outputLoadPercent;
     private Double batteryVoltage;

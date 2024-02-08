@@ -83,7 +83,7 @@ public class StatusService {
             this.updateValues(deviceStatus, data);
 
             deviceStatusList.add(deviceStatus);
-            inverterMetrics.registerDeviceStatusMetrics(deviceStatus);
+            inverterMetrics.updateDeviceStatusMetrics(deviceStatus);
         }
 
         this.updateDatabase(deviceStatus);
@@ -96,7 +96,7 @@ public class StatusService {
         deviceStatus.setOutputVoltage(Double.parseDouble(data[2]));
         deviceStatus.setOutputFrequency(Double.parseDouble(data[3]));
         deviceStatus.setOutputApparentPower(Integer.parseInt(data[4]));
-        deviceStatus.setOutputActivePower(new AtomicInteger(Integer.parseInt(data[5])));
+        deviceStatus.setOutputActivePower(Integer.parseInt(data[5]));
         deviceStatus.setOutputLoadPercent(Integer.parseInt(data[6]));
         deviceStatus.setBusVoltage(Integer.parseInt(data[7]));
         deviceStatus.setBatteryVoltage(Double.parseDouble(data[8]));
