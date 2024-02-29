@@ -37,10 +37,11 @@ public class SerialConnection implements Runnable {
 
     @Override
     public void run() {
-
+        /*
         while (true) {
 
         }
+         */
     }
 
     private final class MessageListener implements SerialPortMessageListener {
