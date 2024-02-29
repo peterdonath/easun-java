@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.konzol.easunjava.domain.inverter.Inverter;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Builder
 @Getter
 @Setter
