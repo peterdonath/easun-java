@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
-public class SerialConnection implements Runnable {
+public class SerialConnection {
 
     private SerialPort comPort;
 
@@ -33,15 +33,6 @@ public class SerialConnection implements Runnable {
 
     public void sendBytes(byte[] bytes) {
         comPort.writeBytes(bytes, bytes.length);
-    }
-
-    @Override
-    public void run() {
-        /*
-        while (true) {
-
-        }
-         */
     }
 
     private final class MessageListener implements SerialPortMessageListener {
