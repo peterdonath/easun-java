@@ -1,6 +1,7 @@
 package net.konzol.easunjava.application.inverter;
 
 import com.fazecast.jSerialComm.SerialPort;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import net.konzol.easunjava.domain.inverter.InverterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +54,12 @@ public class SerialConnectionService {
             log.info("Starting serial connection to serial port: {}", inverter.getPortNumber());
 
             SerialConnection serialConnection = new SerialConnection(eventPublisher, inverter.getPortNumber());
-            Thread serialThread = new Thread(serialConnection);
-            serialThread.start();
-
             connections.add(serialConnection);
         });
+    }
+
+    @PreDestroy
+    public void closeConnections() {
+        connections.forEach(SerialConnection::closeConnection);
     }
 }
