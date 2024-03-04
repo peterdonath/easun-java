@@ -35,7 +35,7 @@ public class StatusService {
     @Getter
     private final List<DeviceStatus> deviceStatusList;
 
-    private StatusService(@Autowired SerialConnectionService serialConnectionService,
+    public StatusService(@Autowired SerialConnectionService serialConnectionService,
                           @Autowired StatisticsRepository statisticsRepository,
                           @Autowired InverterRepository inverterRepository,
                           @Autowired InverterMetrics inverterMetrics) {
@@ -50,6 +50,7 @@ public class StatusService {
 
     @Scheduled(cron = "*/5 * * * * *")
     private void scheduleUpdate() {
+        log.debug("Requesting inverter status");
         serialConnectionService.sendBytes(HexUtils.fromHexString("5150494753B7A90D"));
     }
 
