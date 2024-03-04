@@ -60,6 +60,7 @@ public class SerialConnectionService {
 
     @PreDestroy
     public void closeConnections() {
+        log.info("Closing serial connections.");
         connections.forEach(SerialConnection::closeConnection);
     }
 }
