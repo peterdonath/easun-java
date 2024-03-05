@@ -21,14 +21,17 @@ public class SerialConnection {
         this.eventPublisher = eventPublisher;
         this.portNumber = portNumber;
 
-        log.info("Serial Thread started: {}", portNumber);
+        log.debug("Serial Thread started: {}", portNumber);
 
         comPort = SerialPort.getCommPorts()[portNumber];
         comPort.setBaudRate(2400);
         comPort.setParity(0);
-        comPort.openPort();
         MessageListener listener = new MessageListener();
         comPort.addDataListener(listener);
+    }
+
+    public void openConnection() {
+        comPort.openPort();
     }
 
     public void sendBytes(byte[] bytes) {
@@ -57,6 +60,7 @@ public class SerialConnection {
             String message = new String(delimitedMessage, StandardCharsets.UTF_8);
             log.info("Received the following delimited message: {}", message);
             eventPublisher.publishEvent(new SerialMessageEvent(portNumber, message));
+            closeConnection();
         }
     }
 

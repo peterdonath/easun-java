@@ -34,7 +34,10 @@ public class SerialConnectionService {
         if (connections.size() == 0) {
             this.initializeConnections();
         }
-        connections.forEach(connection -> connection.sendBytes(bytes));
+        connections.forEach(connection -> {
+            connection.openConnection();
+            connection.sendBytes(bytes);
+        });
     }
 
     private void initializeConnections() {
