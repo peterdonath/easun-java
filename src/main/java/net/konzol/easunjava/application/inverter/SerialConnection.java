@@ -31,6 +31,7 @@ public class SerialConnection {
     }
 
     public void openConnection() {
+        log.debug("Opening Serial port");
         comPort.openPort();
     }
 
@@ -65,6 +66,7 @@ public class SerialConnection {
     }
 
     public void closeConnection() {
+        log.debug("Closing Serial port");
         comPort.closePort();
     }
 }
