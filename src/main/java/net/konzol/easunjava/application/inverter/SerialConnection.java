@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
-public class SerialConnection implements Runnable {
+public class SerialConnection {
 
     private SerialPort comPort;
 
@@ -21,27 +21,22 @@ public class SerialConnection implements Runnable {
         this.eventPublisher = eventPublisher;
         this.portNumber = portNumber;
 
-        log.info("Serial Thread started: {}", portNumber);
+        log.debug("Serial Thread started: {}", portNumber);
 
         comPort = SerialPort.getCommPorts()[portNumber];
         comPort.setBaudRate(2400);
         comPort.setParity(0);
-        comPort.openPort();
         MessageListener listener = new MessageListener();
         comPort.addDataListener(listener);
     }
 
-    public void sendBytes(byte[] bytes) {
-        comPort.writeBytes(bytes, bytes.length);
+    public void openConnection() {
+        log.debug("Opening Serial port");
+        comPort.openPort();
     }
 
-    @Override
-    public void run() {
-        /*
-        while (true) {
-
-        }
-         */
+    public void sendBytes(byte[] bytes) {
+        comPort.writeBytes(bytes, bytes.length);
     }
 
     private final class MessageListener implements SerialPortMessageListener {
@@ -66,6 +61,12 @@ public class SerialConnection implements Runnable {
             String message = new String(delimitedMessage, StandardCharsets.UTF_8);
             log.info("Received the following delimited message: {}", message);
             eventPublisher.publishEvent(new SerialMessageEvent(portNumber, message));
+            closeConnection();
         }
+    }
+
+    public void closeConnection() {
+        log.debug("Closing Serial port");
+        comPort.closePort();
     }
 }
