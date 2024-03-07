@@ -81,13 +81,7 @@
 	<profiles>
 		<profile>
 			<id>native</id>
-			<properties>
-				<docker.image.tag>
-					native-${project.version}
-				</docker.image.tag>
-			</properties>
 			<build>
-				<finalName>${project.artifactId}-native-${project.version}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
