@@ -7,6 +7,26 @@ My plan is to hook up a raspberry-pi to the easun 5000VA MPPT hybrid inverter wi
 
 Spring-Boot application - java 17 using graalvm
 
+### Inverter details
+
+The inverter is a clone of the Axpert PIP-4048MS, but in theory the PIP-5048MS has the same protocol.
+
+More info about the inverter: [Aeva forum](https://forums.aeva.asn.au/viewtopic.php?p=53691#p53691)
+
+<p>Currently I have 2 of these, and I found out I need a third one for 3 phase setup.<br>
+Unfortunately I was not able to source the same I already have, but I've found a Daxtromn Power one which looks the same, and has the same parameters.</p>
+
+webshop link: [daxtromn-power.com](https://daxtromn-power.com/products/mppt-5000w-solar-inverter-max-pv-array-power-4000w-48v-dc-max-80a-charge-built-in-parallel-purse-sine-wave)
+
+So right now I have:
+
+* 2 inverters with firmware: 52.30
+* 1 inverter with firmware: 74.20
+
+The do not work together obviously, why would they.
+
+My plan is to flash firmwares all to 73.00e
+
 ## Execution
 
 ### Architecture
