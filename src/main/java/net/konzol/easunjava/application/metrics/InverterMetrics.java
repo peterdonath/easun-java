@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.konzol.easunjava.application.bms.BmsData;
 import net.konzol.easunjava.application.inverter.DeviceStatus;
 import net.konzol.easunjava.controller.jkbms.JkBmsData;
 import net.konzol.easunjava.domain.inverter.Inverter;
@@ -50,19 +51,19 @@ public class InverterMetrics {
                 .register(meterRegistry);
     }
 
-    public void updateJkBmsMetrics(JkBmsData jkBmsData) {
-        registerBmsGauge("jk_b2a20s20p", "bms_cell_voltage_average", jkBmsData, JkBmsData::getAverageCellVoltage);
-        registerBmsGauge("jk_b2a20s20p", "bms_cell_voltage_delta", jkBmsData, JkBmsData::getDeltaCellVoltage);
-        registerBmsGauge("jk_b2a20s20p", "bms_battery_power", jkBmsData, JkBmsData::getBatteryPower);
-        registerBmsGauge("jk_b2a20s20p", "bms_capacity", jkBmsData, JkBmsData::getCapacityRemain);
-        registerBmsGauge("jk_b2a20s20p", "bms_cycle_count", jkBmsData, JkBmsData::getCycleCount);
-        registerBmsGauge("jk_b2a20s20p", "bms_soc", jkBmsData, JkBmsData::getPercentRemain);
+    public void updateJkBmsMetrics(BmsData jkBmsData) {
+        registerBmsGauge("jk_b2a20s20p", "bms_cell_voltage_average", jkBmsData, BmsData::getAverageCellVoltage);
+        registerBmsGauge("jk_b2a20s20p", "bms_cell_voltage_delta", jkBmsData, BmsData::getDeltaCellVoltage);
+        registerBmsGauge("jk_b2a20s20p", "bms_battery_power", jkBmsData, BmsData::getBatteryPower);
+        registerBmsGauge("jk_b2a20s20p", "bms_capacity", jkBmsData, BmsData::getCapacityRemain);
+        registerBmsGauge("jk_b2a20s20p", "bms_cycle_count", jkBmsData, BmsData::getCycleCount);
+        registerBmsGauge("jk_b2a20s20p", "bms_soc", jkBmsData, BmsData::getPercentRemain);
     }
 
     private void registerBmsGauge(String bms,
                                   String metric,
-                                  JkBmsData bmsData,
-                                  ToDoubleFunction<JkBmsData> function) {
+                                  BmsData bmsData,
+                                  ToDoubleFunction<BmsData> function) {
         Gauge.builder(metric, bmsData, function)
             .tag("bms", bms)
             .register(meterRegistry);
