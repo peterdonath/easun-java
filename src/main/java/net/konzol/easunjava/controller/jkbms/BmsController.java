@@ -5,6 +5,7 @@ import net.konzol.easunjava.application.metrics.InverterMetrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,7 +15,7 @@ public class BmsController {
   private final InverterMetrics inverterMetrics;
 
   @PostMapping("/jkbms-data")
-  public ResponseEntity<?> updateBmsData(JkBmsData jkBmsData) {
+  public ResponseEntity<?> updateBmsData(@RequestBody JkBmsData jkBmsData) {
     inverterMetrics.updateJkBmsMetrics(jkBmsData);
 
     return ResponseEntity.ok().build();
